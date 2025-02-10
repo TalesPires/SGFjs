@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro do Motorista</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/gerenciamento/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    {{#> base}}
+    {{/base}}
+    <div class="container">
+        <div class="card mt-4 shadow-lg">
+            <div class="card-header text-white text-center bg-primary">
+                <h2>CADASTRAR MOTORISTA</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="http://localhost:3000/motorista" id="motoristaForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="nome" style="color: #6a708a; font-weight: 500;">Nome Completo</label>
+                            <input type="text" class="form-control" id="nome" name="nome" placeholder="Antônio Fonseca Novais" maxlength="50" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cpf_motorista" style="color: #6a708a; font-weight: 500;">Cadastro de Pessoa Física (CPF)</label>
+                            <input type="text" class="form-control" id="cpf_motorista" name="cpf_motorista" placeholder="62005253501" maxlength="11" minlength="11" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="telefone" style="color: #6a708a; font-weight: 500;">Telefone</label>
+                            <input type="text" class="form-control" id="telefone" name="telefone" placeholder="77981371290" maxlength="11" minlength="11" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="registro_cnh" style="color: #6a708a; font-weight: 500;">Registro da Carteira Nacional de Habilitação (CNH)</label>
+                            <input type="text" class="form-control" id="registro_cnh" name="registro_cnh" maxlength="11" minlength="11" placeholder="76211889218" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="endereco" style="color: #6a708a; font-weight: 500;">Endereço</label>
+                            <input type="text" class="form-control" id="endereco" name="endereco" placeholder="Avenida Lapa, 1001" maxlength="50" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="data_admissao" style="color: #6a708a; font-weight: 500;">Data de Admissão</label>
+                            <input type="date" class="form-control" id="data_admissao" name="data_admissao" required>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-pequeno">SALVAR</button>
+                    </div>
+                </form>
+            </divcd>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('motoristaForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        // Convert date to ISO-8601 format
+        if (data.data_admissao) {
+            data.data_admissao = new Date(data.data_admissao).toISOString();
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/motorista', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Motorista cadastrado com sucesso!');
+                this.reset();
+            } else {
+                alert('Erro ao cadastrar motorista.');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao conectar com o servidor.');
+        }
+        });
+    </script>
+</body>
+</html>

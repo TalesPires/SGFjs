@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model acessa {
+  cpf_fiscal     String   @db.VarChar(11)
+  id_tipo        Int      @db.UnsignedSmallInt
+  data_alteracao DateTime @db.DateTime(0)
+  valor_km       Decimal? @db.Decimal(7, 2)
+  valor_tonelada Decimal? @db.Decimal(7, 2)
+  valor_entrega  Decimal? @db.Decimal(10, 2)
+  fiscal         fiscal   @relation(fields: [cpf_fiscal], references: [cpf_fiscal], onDelete: NoAction, onUpdate: NoAction, map: "acessa_ibfk_1")
+  tipo           tipo     @relation(fields: [id_tipo], references: [id_tipo], onDelete: NoAction, onUpdate: NoAction, map: "acessa_ibfk_2")
+
+  @@id([id_tipo, cpf_fiscal, data_alteracao])
+  @@index([cpf_fiscal], map: "cpf_fiscal")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model carga {
+  codigo_carga Int       @id @default(autoincrement()) @db.UnsignedInt
+  id_frete     Int?      @db.UnsignedInt
+  peso         Decimal?  @db.Decimal(7, 2)
+  valor_carga  Decimal?  @db.Decimal(10, 2)
+  frete        frete?    @relation(fields: [id_frete], references: [id_frete], onDelete: NoAction, onUpdate: NoAction, map: "carga_ibfk_1")
+  entrega      entrega[]
+
+  @@index([id_frete], map: "id_frete")
+}
+
+model cartao {
+  numero_conta  String     @id @db.VarChar(6)
+  cpf_motorista String?   @db.VarChar(11)
+  agencia       String?    @db.VarChar(5)
+  validade      DateTime?  @db.Date
+  motorista     motorista? @relation(fields: [cpf_motorista], references: [cpf_motorista], onDelete: NoAction, onUpdate: NoAction, map: "cartao_ibfk_1")
+
+  @@index([cpf_motorista], map: "cpf_motorista")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model entrega {
+  id_entrega            Int                     @id @default(autoincrement()) @db.UnsignedInt
+  codigo_carga          Int?                    @db.UnsignedInt
+  cidade                String?                 @db.VarChar(30)
+  valor_entrega         Decimal?                @db.Decimal(10, 2)
+  peso_entrega          Decimal?                @db.Decimal(7, 2)
+  dificuldade           Boolean?
+  cliente               String?                 @db.VarChar(30)
+  carga                 carga?                  @relation(fields: [codigo_carga], references: [codigo_carga], onDelete: NoAction, onUpdate: NoAction, map: "entrega_ibfk_1")
+  entrega_distribuidora entrega_distribuidora[]
+
+  @@index([codigo_carga], map: "codigo_carga")
+}
+
+model entrega_distribuidora {
+  id_entrega    Int     @db.UnsignedInt
+  distribuidora String  @db.VarChar(30)
+  entrega       entrega @relation(fields: [id_entrega], references: [id_entrega], onDelete: NoAction, onUpdate: NoAction, map: "entrega_distribuidora_ibfk_1")
+
+  @@id([id_entrega, distribuidora])
+}
+
+model fiscal {
+  cpf_fiscal   String      @id @db.VarChar(11)
+  nome_usuario String?     @unique(map: "nome_usuario_UNIQUE") @db.VarChar(50)
+  email        String?     @db.VarChar(55)
+  ativo        Boolean?    @default(true)
+  staff        Boolean?    @default(false)
+  password     String?     @db.VarChar(255)
+  last_login   DateTime?   @db.DateTime(0)
+  acessa       acessa[]
+  pagamento    pagamento[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model frete {
+  id_frete          Int         @id @default(autoincrement()) @db.UnsignedInt
+  cpf_motorista     String?    @db.VarChar(11)
+  renavam           String?     @db.VarChar(11)
+  data_chegada      DateTime?   @db.DateTime(0)
+  data_saida        DateTime?   @db.DateTime(0)
+  distancia_rodagem Int?        @db.SmallInt
+  valor_frete       Decimal?    @db.Decimal(10, 2)
+  carga             carga[]
+  motorista         motorista? @relation(fields: [cpf_motorista], references: [cpf_motorista], onDelete: NoAction, onUpdate: NoAction, map: "frete_ibfk_1")
+  veiculo           veiculo?    @relation(fields: [renavam], references: [renavam], onDelete: NoAction, onUpdate: NoAction, map: "frete_ibfk_2")
+  pagamento         pagamento[]
+
+  @@index([cpf_motorista], map: "cpf_motorista")
+  @@index([renavam], map: "renavam")
+}
+
+model motorista {
+  cpf_motorista String   @id @unique(map: "cpf_motorista_UNIQUE") @db.VarChar(11)
+  registro_cnh  String?   @db.VarChar(11)
+  nome          String?   @db.VarChar(50)
+  telefone      String?   @db.VarChar(11)
+  endereco      String?   @db.VarChar(50)
+  data_admissao DateTime? @db.Date
+  cartao        cartao[]
+  frete         frete[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model pagamento {
+  id_pagamento     Int                         @id @default(autoincrement()) @db.UnsignedInt
+  cpf_fiscal       String                      @db.VarChar(11)
+  id_frete         Int                         @db.UnsignedInt
+  taxa_desconto    Decimal?                    @db.Decimal(6, 2)
+  taxa_acrescimo   Decimal?                    @db.Decimal(6, 2)
+  data_pagamento   DateTime?                   @db.DateTime(0)
+  status_pagamento pagamento_status_pagamento?
+  valor_calculado  Decimal?                    @db.Decimal(10, 2)
+  fiscal           fiscal                      @relation(fields: [cpf_fiscal], references: [cpf_fiscal], onDelete: NoAction, onUpdate: NoAction, map: "pagamento_ibfk_1")
+  frete            frete                       @relation(fields: [id_frete], references: [id_frete], onDelete: NoAction, onUpdate: NoAction, map: "pagamento_ibfk_2")
+
+  @@index([cpf_fiscal], map: "pagamento_ibfk_1")
+  @@index([id_frete], map: "pagamento_ibfk_2")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tipo {
+  id_tipo          Int       @id @default(autoincrement()) @db.UnsignedSmallInt
+  nome_tipo        String?   @db.VarChar(20)
+  capacidade_peso  Decimal?  @db.Decimal(7, 2)
+  quantidade_eixos Int?      @db.UnsignedSmallInt
+  acessa           acessa[]
+  veiculo          veiculo[]
+}
+
+model veiculo {
+  renavam String  @id @db.VarChar(11)
+  id_tipo Int?    @db.UnsignedSmallInt
+  placa   String? @db.VarChar(20)
+  marca   String? @db.VarChar(20)
+  modelo  String? @db.VarChar(20)
+  cor     String? @db.VarChar(20)
+  ano     Int?    @db.Year
+  rntrc   String? @db.VarChar(8)
+  frete   frete[]
+  tipo    tipo?   @relation(fields: [id_tipo], references: [id_tipo], onDelete: NoAction, onUpdate: NoAction, map: "veiculo_ibfk_1")
+
+  @@index([id_tipo], map: "id_tipo")
+}
+
+enum pagamento_status_pagamento {
+  PE
+  TR
+  PA
+}
+

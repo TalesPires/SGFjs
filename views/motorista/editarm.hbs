@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edição dos Motoristas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/gerenciamento/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    {{#> base}}
+    {{/base}}
+    <div class="container atributos">
+        <div class="card mt-4 shadow-lg">
+            <div class="card-header text-white bg-primary">
+                <h2 class="d-flex justify-content-center"> 
+                    <span class="mt-1"> EDITAR MOTORISTA </span>
+                    <input type="text" id="accordion_search_bar" class="form-control pesquisa ms-4 mt-1" placeholder="Otavio...">
+                </h2>
+            </div>
+            <div class="card-body">            
+                <div class="scrollable-menu" id="scrollable-menu" data-bs-spy="scroll" data-bs-target="#employeeAccordion" data-bs-offset="0" tabindex="0">
+                    <div class="accordion" id="employeeAccordion">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchMotoristas() {
+            try {
+                const response = await fetch('http://localhost:3000/motorista');
+                const motoristas = await response.json();
+                const accordionContainer = document.getElementById('employeeAccordion');
+                accordionContainer.innerHTML = '';
+
+                motoristas.forEach((motorista, index) => {
+                    const item = `
+                        <div class="accordion-item AccordionContainer" id="motorista-${index+1}">
+                            <h2 class="accordion-header" id="heading${index+1}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index+1}" aria-expanded="true" aria-controls="collapse${index+1}">
+                                    <div class="branco">  ${motorista.nome} </div>
+                                </button>
+                            </h2>
+                            <div id="collapse${index+1}" class="accordion-collapse collapse" aria-labelledby="heading${index+1}" data-bs-parent="#employeeAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                    <div class="col-md-6">
+                                        <p> <span class="atributos">Cadastro de Pessoa Física (CPF) </span><br> ${ motorista.cpf_motorista }</p>
+                                        <p><span class="atributos">Registro da Carteira Nacional de Habilitação</span><br>${ motorista.registro_cnh }</p>
+                                        <p><span class="atributos">Data de Admissão</span><br>${new Date(motorista.data_admissao).toLocaleDateString()}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><span class="atributos">Telefone</span><br>${ motorista.telefone }</p>
+                                        <p><span class="atributos">Endereço</span><br>${ motorista.endereco }</p>
+                                        <a type="button" href="http://localhost:3000/motorista/editar/${motorista.cpf_motorista}" class="btn btn-success btn-pequeno">EDITAR</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    accordionContainer.innerHTML += item;
+                });
+            } catch (error) {
+                console.error('Erro ao buscar motoristas:', error);
+            }
+        }
+
+        document.getElementById('accordion_search_bar').addEventListener('input', function() {
+            var searchText = this.value.toLowerCase();
+            document.querySelectorAll('.AccordionContainer').forEach(function(accordion) {
+                if (accordion.innerText.toLowerCase().includes(searchText)) {
+                    accordion.style.display = 'block';
+                } else {
+                    accordion.style.display = 'none';
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchMotoristas);
+    </script>
+</body>
+</html>
