@@ -61,7 +61,6 @@
 
 
     <script>
-    // Get numero_conta from URL path
     const getCPFmotorista = () => {
         const pathParts = window.location.pathname.split('/');
         return pathParts[pathParts.length - 1];
@@ -71,49 +70,44 @@
         try {
             const cpf_motorista = getCPFmotorista();
             const response = await fetch(`http://localhost:3000/motorista/${cpf_motorista}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Failed to fetch motorista');
-            }
+            if (!response.ok) throw new Error('Failed to fetch motorista');
 
             const motorista = await response.json();
             
+            // Populate form fields
             document.getElementById('nome').value = motorista.nome;
             document.getElementById('cpf_motorista').value = motorista.cpf_motorista;
             document.getElementById('telefone').value = motorista.telefone;
             document.getElementById('registro_cnh').value = motorista.registro_cnh;
             document.getElementById('endereco').value = motorista.endereco;
             
-            // Handle date safely
-            const rawDate = cartao.data_admissao || new Date().toISOString();
+            // Correct variable name from 'cartao' to 'motorista'
+            const rawDate = motorista.data_admissao || new Date().toISOString();
             document.getElementById('data_admissao').value = 
                 new Date(rawDate).toISOString().split('T')[0];
 
         } catch (error) {
-            console.error('Erro ao buscar dados do motorista:', error);
-            alert(error.message || 'Erro ao carregar dados do motorista');
+            console.error('Erro ao buscar dados:', error);
+            alert(error.message || 'Erro ao carregar dados');
         }
     }
 
-    document.getElementById('editMotoristaForm').addEventListener('submit', async (event) => {
+    // Correct form ID to 'motoristaForm'
+    document.getElementById('motoristaForm').addEventListener('submit', async (event) => {
         event.preventDefault();
         
         const cpf_motorista = getCPFmotorista();
         const formData = {
-            nome:  document.getElementById('nome').value,
+            nome: document.getElementById('nome').value,
             cpf_motorista: document.getElementById('cpf_motorista').value,
             telefone: document.getElementById('telefone').value,
             registro_cnh: document.getElementById('registro_cnh').value,
             endereco: document.getElementById('endereco').value,
-            data_admissao: document.getElementById('data_admissao').value
+            data_admissao: new Date(document.getElementById('data_admissao').value).toISOString()
         };
-
-        formData.data_admissao = new Date(formData.data_admissao).toISOString();
 
         try {
             const response = await fetch(`http://localhost:3000/motorista/${cpf_motorista}`, {
@@ -125,21 +119,18 @@
                 body: JSON.stringify(formData)
             });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Update failed');
-            }
-
-            alert('Motorista atualizado com sucesso!');
+            if (!response.ok) throw new Error(await response.text());
+            alert('Motorista atualizado!');
             window.location.href = 'http://localhost:3000';
             
         } catch (error) {
-            console.error('Erro ao atualizar o motorista:', error);
-            alert(error.message || 'Erro ao atualizar o motorista');
+            console.error('Erro na atualização:', error);
+            alert(error.message || 'Erro ao atualizar');
         }
     });
 
-    document.addEventListener('DOMContentLoaded', fetchCartaoData);
-</script>
+    // Correct function name to fetchMotoristaData
+    document.addEventListener('DOMContentLoaded', fetchMotoristaData);
+    </script>
 </body>
 </html>

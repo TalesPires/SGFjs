@@ -32,6 +32,6 @@ export class MotoristaController {
 
   @Delete(':cpf_motorista')
   async remove(@Param('cpf_motorista') cpf_motorista: string) {
-    return this.motoristaService.remove(cpf_motorista);
+    return await this.motoristaService.remove(cpf_motorista);
   }
 }

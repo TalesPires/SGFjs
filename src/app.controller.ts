@@ -73,4 +73,34 @@ export class AppController {
   excluirm() {
     return {};
   }
+
+  @Get('tipo/cadastrar')  
+  @Render('tipo/cadastrart')
+  cadastrart() {
+    return {};
+  }
+
+  @Get('tipo/editar')  
+  @Render('tipo/editart')
+  editart() {
+    return {};
+  }
+
+  @Get('tipo/pesquisar')  
+  @Render('tipo/pesquisart')
+  pesquisart() {
+    return {};
+  }
+
+  @Get('tipo/editar/:id_tipo')  
+  @Render('tipo/formeditart')
+  formeditart() {
+    return {};
+  }
+
+  @Get('tipo/excluir')  
+  @Render('tipo/excluirt')
+  excluirt() {
+    return {};
+  }
 }

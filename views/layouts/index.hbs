@@ -10,95 +10,116 @@
   <link href="/gerenciamento/style.css" rel="stylesheet">
 </head>
 <body>
-  <div class="btn-group mt-4 esquerda shadow">
-    <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Motorista
-    </button>
-    <ul class="dropdown-menu dropdown-menu-dark">
-      <li><a class="dropdown-item d-flex justify-content-center" href="motorista/cadastrar">Cadastrar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="motorista/pesquisar">Pesquisar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="motorista/editar">Editar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="motorista/excluir">Excluir</a></li>
-    </ul>
-  </div>
+   <div class="btn-group ms-4 mt-4 shadow">
+        <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Motorista
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            
+            <li><a class="dropdown-item d-flex justify-content-center" href="motorista/cadastrar">Cadastrar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="motorista/pesquisar">Pesquisar</a></li>
+            <li><hr class="dropdown-divider d-flex justify-content-center"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="motorista/editar">Editar</a></li>
+            <li><hr class="dropdown-divider d-flex justify-content-center"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="motorista/excluir">Excluir</a></li>
+        </ul>
+    </div>
 
-  <div class="btn-group ms-2 mt-4 shadow">
-    <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Cartão
-    </button>
-    <ul class="dropdown-menu dropdown-menu-dark">
-      <li><a class="dropdown-item d-flex justify-content-center" href="cartao/cadastrar">Cadastrar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="cartao/pesquisar">Pesquisar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="cartao/editar">Editar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="cartao/excluir">Excluir</a></li>
-    </ul>
-  </div>
+    <div class="btn-group ms-2 mt-4 shadow">
+        <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Cartão
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item d-flex justify-content-center" href="cartao/cadastrar">Cadastrar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="cartao/pesquisar">Pesquisar</a></li>
+            <li><hr class="dropdown-divider "></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="cartao/editar">Editar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="cartao/excluir">Excluir</a></li>
+        </ul>
+    </div>
+    
+    <div class="btn-group ms-2 mt-4 shadow">
+        <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Veículo
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:cadastrarv' %}">Cadastrar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:pesquisarv' %}">Pesquisar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:editarv' %}">Editar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:excluirv' %}">Excluir</a></li>
+        </ul>
+    </div>
 
-  <div class="btn-group ms-2 mt-4">
-    <button class="btn btn-secondary btn-lg shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Veículo
-    </button>
-    <ul class="dropdown-menu dropdown-menu-dark">
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Cadastrar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Pesquisar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Editar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Excluir</a></li>
-    </ul>
-  </div>
+    <div class="btn-group ms-2 mt-4 shadow">
+        <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Tipo de Veículo
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item d-flex justify-content-center" href="tipo/cadastrar">Cadastrar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="tipo/pesquisar">Pesquisar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="tipo/editar">Editar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="tipo/excluir">Excluir</a></li>
+        </ul>
+    </div>
 
-  <div class="btn-group ms-2 mt-4">
-    <button class="btn btn-secondary btn-lg shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Tipo de Veículo
-    </button>
-    <ul class="dropdown-menu dropdown-menu-dark">
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Cadastrar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Pesquisar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Editar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Excluir</a></li>
-    </ul>
-  </div>
+    <div class="btn-group ms-2 mt-4 shadow">
+        <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Frete
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:cadastrarf' %}">Cadastrar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:pesquisarf' %}">Pesquisar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:editarf' %}">Editar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:excluirf' %}">Excluir</a></li>
+        </ul>
+    </div>
 
-  <div class="btn-group ms-2 mt-4">
-    <button class="btn btn-secondary btn-lg shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Frete
-    </button>
-    <ul class="dropdown-menu dropdown-menu-dark">
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Cadastrar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Pesquisar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Editar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Excluir</a></li>
-    </ul>
-  </div>
+    <div class="btn-group ms-2 mt-4 shadow">
+        <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Pagamento
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:cadastrarp' %}">Cadastrar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:pesquisarp' %}">Pesquisar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:editarp' %}">Editar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:excluirp' %}">Excluir</a></li>
+        </ul>
+    </div>
 
-  <div class="btn-group ms-2 mt-4 direita">
-    <button class="btn btn-secondary btn-lg shadow" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Pagamento
-    </button>
-    <ul class="dropdown-menu dropdown-menu-dark">
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Cadastrar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Pesquisar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Editar</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item d-flex justify-content-center" href="#">Excluir</a></li>
-    </ul>
-  </div>
+    <div class="btn-group ms-2 mt-4 shadow">
+        <button class="btn btn-secondary btn-lg" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Fiscal
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:cadastraru' %}">Cadastrar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:pesquisaru' %}">Pesquisar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:editaru' %}">Editar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item d-flex justify-content-center" href="{% url 'gerenciamento:excluiru' %}">Excluir</a></li>
+        </ul>
+    </div>
+    
+    <div class="d-flex align-items-center">
+
+    
+    </div>
 
   <div class="d-flex align-items-center">
     <img width="400" src="/gerenciamento/OPL-Fundo-Branco-1.png" class="mx-auto" alt="logo">

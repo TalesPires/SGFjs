@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro do Tipo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/gerenciamento/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    {{#> base}}
+    {{/base}}
+    <div class="container">
+        <div class="card mt-4 shadow-lg">
+            <div class="card-header text-white text-center bg-primary">
+                <h2>CADASTRAR TIPO</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="http://localhost:3000/tipo" id="tipoForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="nome_tipo" style="color: #6a708a; font-weight: 500;">Nome do Tipo</label>
+                            <input type="text" class="form-control" id="nome_tipo" name="nome_tipo" placeholder="Nome do Tipo" maxlength="20">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="capacidade_peso" style="color: #6a708a; font-weight: 500;">Capacidade de Peso (kg)</label>
+                            <input type="number" step="0.01" class="form-control" id="capacidade_peso" name="capacidade_peso" placeholder="Capacidade de Peso">
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="quantidade_eixos" style="color: #6a708a; font-weight: 500;">Quantidade de Eixos</label>
+                            <input type="number" class="form-control" id="quantidade_eixos" name="quantidade_eixos" placeholder="Quantidade de Eixos">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-pequeno">SALVAR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('tipoForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        // Ensure quantidade_eixos is an integer
+        if (data.quantidade_eixos) {
+            data.quantidade_eixos = parseInt(data.quantidade_eixos, 10);
+        }
+
+        try {
+            const response = await fetch('http://localhost:3000/tipo', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert('Tipo cadastrado com sucesso!');
+                this.reset();
+            } else {
+                alert('Erro ao cadastrar tipo.');
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao conectar com o servidor.');
+        }
+        });
+    </script>
+</body>
+</html>

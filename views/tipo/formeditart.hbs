@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edição do Tipo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/gerenciamento/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    {{#> base}}
+    {{/base}}
+    <div class="container">
+        <div class="card mt-4 shadow-lg">
+            <div class="card-header text-white text-center bg-primary">
+                <h2>EDITAR TIPO</h2>
+            </div>
+            <div class="card-body">
+                <form id="editTipoForm" method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="nome_tipo" style="color: #6a708a; font-weight: 500;">Nome do Tipo</label>
+                            <input type="text" id="nome_tipo" name="nome_tipo" class="form-control" maxlength="20" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="capacidade_peso" style="color: #6a708a; font-weight: 500;">Capacidade de Peso (kg)</label>
+                            <input type="number" step="0.01" id="capacidade_peso" name="capacidade_peso" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="quantidade_eixos" style="color: #6a708a; font-weight: 500;">Quantidade de Eixos</label>
+                            <input type="number" id="quantidade_eixos" name="quantidade_eixos" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-success btn-pequeno">SALVAR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Get id_tipo from URL path
+    const getIdTipo = () => {
+        const pathParts = window.location.pathname.split('/');
+        return parseInt(pathParts[pathParts.length - 1], 10);
+    };
+
+    async function fetchTipoData() {
+        try {
+            const idTipo = getIdTipo();
+            const response = await fetch(`http://localhost:3000/tipo/2`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to fetch tipo');
+            }
+
+            const tipo = await response.json();
+            
+            document.getElementById('nome_tipo').value = tipo.nome_tipo;
+            document.getElementById('capacidade_peso').value = tipo.capacidade_peso;
+            document.getElementById('quantidade_eixos').value = tipo.quantidade_eixos;
+
+        } catch (error) {
+            console.error('Erro ao buscar dados do tipo:', error);
+            alert(error.message || 'Erro ao carregar dados do tipo');
+        }
+    }
+
+    document.getElementById('editTipoForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        const idTipo = getIdTipo();
+        const formData = {
+            nome_tipo: document.getElementById('nome_tipo').value,
+            capacidade_peso: document.getElementById('capacidade_peso').value,
+            quantidade_eixos: parseInt(document.getElementById('quantidade_eixos').value, 10)
+        };
+
+        try {
+            const response = await fetch(`http://localhost:3000/tipo/${idTipo}`, {
+                method: 'PATCH',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Update failed');
+            }
+
+            alert('Tipo atualizado com sucesso!');
+            window.location.href = 'http://localhost:3000';
+            
+        } catch (error) {
+            console.error('Erro ao atualizar o tipo:', error);
+            alert(error.message || 'Erro ao atualizar o tipo');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', fetchTipoData);
+    </script>
+</body>
+</html>

@@ -18,17 +18,19 @@
             </div>
             <div class="card-body">
                 <form method="POST" action="http://localhost:3000/motorista" id="motoristaForm">
-                    <div class="row">
+                   
+                   <div class="row">
                         <div class="col-md-6">
                             <label for="nome" style="color: #6a708a; font-weight: 500;">Nome Completo</label>
                             <input type="text" class="form-control" id="nome" name="nome" placeholder="Antônio Fonseca Novais" maxlength="50" required>
                         </div>
                         <div class="col-md-6">
                             <label for="cpf_motorista" style="color: #6a708a; font-weight: 500;">Cadastro de Pessoa Física (CPF)</label>
-                            <input type="text" class="form-control" id="cpf_motorista" name="cpf_motorista" placeholder="62005253501" maxlength="11" minlength="11" required>
+                            <select class="form-control" id="cpf_motorista" name="cpf_motorista" required>
+                                <option value="" disabled selected>Selecione um CPF</option>
+                            </select>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-6">
                             <label for="telefone" style="color: #6a708a; font-weight: 500;">Telefone</label>
@@ -60,34 +62,69 @@
     </div>
 
     <script>
-        document.getElementById('motoristaForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
+        // Function to load CPFs and names from the database and populate the select menu
+        async function loadCpfMotoristas() {
+            try {
+                const response = await fetch('http://localhost:3000/motorista', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token if authentication is required
+                    }
+                });
 
-        // Convert date to ISO-8601 format
-        if (data.data_admissao) {
-            data.data_admissao = new Date(data.data_admissao).toISOString();
-        }
+                if (!response.ok) {
+                    throw new Error('Falha ao carregar CPFs e nomes dos motoristas');
+                }
 
-        try {
-            const response = await fetch('http://localhost:3000/motorista', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+                const motoristas = await response.json();
 
-            if (response.ok) {
-                alert('Motorista cadastrado com sucesso!');
-                this.reset();
-            } else {
-                alert('Erro ao cadastrar motorista.');
+                // Get the select element
+                const cpfSelect = document.getElementById('cpf_motorista');
+
+                // Populate the select menu with CPFs and names
+                motoristas.forEach(motorista => {
+                    const option = document.createElement('option');
+                    option.value = motorista.cpf_motorista; // Set the value as the CPF
+                    option.textContent = `${motorista.cpf_motorista} - ${motorista.nome}`; // Display CPF and name in the dropdown
+                    cpfSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading CPFs and names:', error);
+                alert('Erro ao carregar CPFs e nomes dos motoristas');
             }
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('Erro ao conectar com o servidor.');
         }
+
+        // Call the function when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', loadCpfMotoristas);
+
+        // Form submission handler
+        document.getElementById('motoristaForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            // Convert date to ISO-8601 format
+            if (data.data_admissao) {
+                data.data_admissao = new Date(data.data_admissao).toISOString();
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/motorista', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Motorista cadastrado com sucesso!');
+                    this.reset(); // Reset the form after successful submission
+                } else {
+                    alert('Erro ao cadastrar motorista.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor.');
+            }
         });
     </script>
 </body>
