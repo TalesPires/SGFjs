@@ -17,6 +17,7 @@
                 <h2>CADASTRAR CARTÃO</h2>
             </div>
             <div class="card-body">
+                <div id="alertContainer"></div> <!-- Container for Bootstrap alerts -->
                 <form method="POST" action="http://localhost:3000/cartao" id="cartaoForm">
                     <div class="row">
                         <div class="col-md-6">
@@ -25,7 +26,9 @@
                         </div>
                         <div class="col-md-6">
                             <label for="cpf_motorista" style="color: #6a708a; font-weight: 500;">Cadastro de Pessoa Física (CPF)</label>
-                            <input type="text" class="form-control" id="cpf_motorista" name="cpf_motorista" placeholder="62005253501" maxlength="11" minlength="11" required>
+                            <select class="form-control" id="cpf_motorista" name="cpf_motorista" required>
+                                <option value="" disabled selected>Selecione um CPF</option>
+                            </select>
                         </div>
                     </div>
 
@@ -49,34 +52,78 @@
     </div>
 
     <script>
-        document.getElementById('cartaoForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-
-        // Convert date to ISO-8601 format
-        if (data.validade) {
-            data.validade = new Date(data.validade).toISOString();
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
         }
 
-        try {
-            const response = await fetch('http://localhost:3000/cartao', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+        async function loadCpfMotoristas() {
+            try {
+                const response = await fetch('http://localhost:3000/motorista', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token if authentication is required
+                    }
+                });
 
-            if (response.ok) {
-                alert('Cartão cadastrado com sucesso!');
-                this.reset();
-            } else {
-                alert('Erro ao cadastrar cartão.');
+                if (!response.ok) {
+                    throw new Error('Falha ao carregar CPFs e nomes dos motoristas');
+                }
+
+                const motoristas = await response.json();
+
+                // Get the select element
+                const cpfSelect = document.getElementById('cpf_motorista');
+
+                // Populate the select menu with CPFs and names
+                motoristas.forEach(motorista => {
+                    const option = document.createElement('option');
+                    option.value = motorista.cpf_motorista; // Set the value as the CPF
+                    option.textContent = `${motorista.cpf_motorista} - ${motorista.nome}`; // Display CPF and name in the dropdown
+                    cpfSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading CPFs and names:', error);
+                showAlert('Erro ao carregar CPFs e nomes dos motoristas', 'danger');
             }
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('Erro ao conectar com o servidor.');
         }
+
+        // Call the function when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', loadCpfMotoristas);
+        
+        document.getElementById('cartaoForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            // Convert date to ISO-8601 format
+            if (data.validade) {
+                data.validade = new Date(data.validade).toISOString();
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/cartao', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showAlert('Cartão cadastrado com sucesso!','success');
+                    this.reset();
+                } else {
+                    const errorData = await response.json();
+                    showAlert(`Erro ao cadastrar cartão: ${errorData.message || 'Erro desconhecido'}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('Erro ao conectar com o servidor.', 'danger');
+            }
         });
     </script>
 </body>

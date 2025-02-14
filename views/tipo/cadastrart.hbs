@@ -17,6 +17,7 @@
                 <h2>CADASTRAR TIPO</h2>
             </div>
             <div class="card-body">
+                <div id="alertContainer"></div> <!-- Container for Bootstrap alerts -->
                 <form method="POST" action="http://localhost:3000/tipo" id="tipoForm">
                     <div class="row">
                         <div class="col-md-6">
@@ -28,7 +29,6 @@
                             <input type="number" step="0.01" class="form-control" id="capacidade_peso" name="capacidade_peso" placeholder="Capacidade de Peso">
                         </div>
                     </div>
-
                     <div class="row mt-3">
                         <div class="col-md-6">
                             <label for="quantidade_eixos" style="color: #6a708a; font-weight: 500;">Quantidade de Eixos</label>
@@ -45,34 +45,50 @@
     </div>
 
     <script>
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+        }
+
         document.getElementById('tipoForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
 
-        // Ensure quantidade_eixos is an integer
-        if (data.quantidade_eixos) {
-            data.quantidade_eixos = parseInt(data.quantidade_eixos, 10);
-        }
-
-        try {
-            const response = await fetch('http://localhost:3000/tipo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                alert('Tipo cadastrado com sucesso!');
-                this.reset();
-            } else {
-                alert('Erro ao cadastrar tipo.');
+            // Ensure quantidade_eixos is an integer
+            if (data.quantidade_eixos) {
+                data.quantidade_eixos = parseInt(data.quantidade_eixos, 10);
             }
-        } catch (error) {
-            console.error('Erro:', error);
-            alert('Erro ao conectar com o servidor.');
-        }
+
+            // Ensure quantidade_eixos is an integer
+            if (data.capacidade_peso) {
+                data.capacidade_peso = parseInt(data.capacidade_peso, 10);
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/tipo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showAlert('Tipo cadastrado com sucesso!', 'success');
+                    this.reset();
+                } else {
+                    const errorData = await response.json();
+                    showAlert(`Erro ao cadastrar tipo: ${errorData.message || 'Erro desconhecido'}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('Erro ao conectar com o servidor.', 'danger');
+            }
         });
     </script>
 </body>

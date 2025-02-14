@@ -103,4 +103,34 @@ export class AppController {
   excluirt() {
     return {};
   }
+
+  @Get('veiculo/cadastrar')  
+  @Render('veiculo/cadastrarv')
+  cadastrarv() {
+    return {};
+  }
+
+  @Get('veiculo/editar')  
+  @Render('veiculo/editarv')
+  editarv() {
+    return {};
+  }
+
+  @Get('veiculo/pesquisar')  
+  @Render('veiculo/pesquisarv')
+  pesquisarv() {
+    return {};
+  }
+
+  @Get('veiculo/editar/:renavam')  
+  @Render('veiculo/formeditarv')
+  formeditarv() {
+    return {};
+  }
+
+  @Get('veiculo/excluir')  
+  @Render('veiculo/excluirv')
+  excluirv() {
+    return {};
+  }
 }

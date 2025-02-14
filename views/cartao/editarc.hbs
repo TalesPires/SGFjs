@@ -19,7 +19,8 @@
                     <input type="text" id="accordion_search_bar" class="form-control pesquisa ms-4 mt-1" placeholder="Otavio...">
                 </h2>
             </div>
-            <div class="card-body">            
+            <div class="card-body">
+                <div id="alertContainer"></div> <!-- Container for Bootstrap alerts -->
                 <div class="scrollable-menu" id="scrollable-menu" data-bs-spy="scroll" data-bs-target="#employeeAccordion" data-bs-offset="0" tabindex="0">
                     <div class="accordion" id="employeeAccordion">
                     </div>
@@ -29,6 +30,16 @@
     </div>
 
     <script>
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+        }
+
         async function fetchCartoes() {
             try {
                 const response = await fetch('http://localhost:3000/cartao');
@@ -64,6 +75,7 @@
                 });
             } catch (error) {
                 console.error('Erro ao buscar cartões:', error);
+                showAlert('Erro ao buscar cartões', 'danger');
             }
         }
 

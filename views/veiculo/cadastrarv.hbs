@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Veículo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/gerenciamento/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    {{#> base}}
+    {{/base}}
+    <div class="container">
+        <div class="card mt-4 shadow-lg">
+            <div class="card-header text-white text-center bg-primary">
+                <h2>CADASTRAR VEÍCULO</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="http://localhost:3000/veiculo" id="veiculoForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="renavam" style="color: #6a708a; font-weight: 500;">Renavam</label>
+                            <input type="text" class="form-control" id="renavam" name="renavam" placeholder="12345678901" maxlength="11" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_tipo" style="color: #6a708a; font-weight: 500;">Tipo</label>
+                            <select class="form-control" id="id_tipo" name="id_tipo" required>
+                                <option value="" disabled selected>Selecione um tipo de veiculo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="placa" style="color: #6a708a; font-weight: 500;">Placa</label>
+                            <input type="text" class="form-control" id="placa" name="placa" placeholder="ABC1234" maxlength="20">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="marca" style="color: #6a708a; font-weight: 500;">Marca</label>
+                            <input type="text" class="form-control" id="marca" name="marca" placeholder="Marca" maxlength="20">
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="modelo" style="color: #6a708a; font-weight: 500;">Modelo</label>
+                            <input type="text" class="form-control" id="modelo" name="modelo" placeholder="Modelo" maxlength="20">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cor" style="color: #6a708a; font-weight: 500;">Cor</label>
+                            <input type="text" class="form-control" id="cor" name="cor" placeholder="Cor" maxlength="20">
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="ano" style="color: #6a708a; font-weight: 500;">Ano</label>
+                            <input type="number" class="form-control" id="ano" name="ano" placeholder="2025">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="rntrc" style="color: #6a708a; font-weight: 500;">RNTRC</label>
+                            <input type="text" class="form-control" id="rntrc" name="rntrc" placeholder="12345678" maxlength="8">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success btn-pequeno">SALVAR</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadTipos() {
+            try {
+                const response = await fetch('http://localhost:3000/tipo', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}` // Include token if authentication is required
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha ao carregar os tipos de veículos');
+                }
+
+                const tipos = await response.json();
+
+                // Get the select element
+                const tipoSelect = document.getElementById('id_tipo');
+
+                // Populate the select menu with id_tipo and nome_tipo
+                tipos.forEach(tipo => {
+                    const option = document.createElement('option');
+                    option.value = tipo.id_tipo; // Set the value as the id_tipo
+                    option.textContent = `${tipo.id_tipo} - ${tipo.nome_tipo}`; // Display id_tipo and nome_tipo in the dropdown
+                    tipoSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading tipos:', error);
+                alert('Erro ao carregar os tipos de veículos');
+            }
+        }
+
+        // Call the function when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', loadTipos);
+        
+        document.getElementById('veiculoForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            // Convert id_tipo and ano to integers
+            if (data.id_tipo) {
+                data.id_tipo = parseInt(data.id_tipo, 10);
+            }
+            if (data.ano) {
+                data.ano = parseInt(data.ano, 10);
+            }
+
+            try {
+                const response = await fetch('http://localhost:3000/veiculo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Veículo cadastrado com sucesso!');
+                    this.reset();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Erro ao cadastrar veículo:', errorData);
+                    alert(`Erro ao cadastrar veículo: ${errorData.message || response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao conectar com o servidor.');
+            }
+        });
+    </script>
+</body>
+</html>
