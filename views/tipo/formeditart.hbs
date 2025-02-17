@@ -128,7 +128,8 @@
                     throw new Error(error.message || 'Update failed');
                 }
 
-                showAlert('Tipo atualizado com sucesso!', 'success', '/');
+                alert('Tipo atualizado com sucesso!');
+                window.location.href = 'http://localhost:3000/motorista/editar';
                 
             } catch (error) {
                 console.error('Erro ao atualizar o tipo:', error);

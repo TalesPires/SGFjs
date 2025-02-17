@@ -17,6 +17,7 @@
                 <h2>CADASTRAR VEÍCULO</h2>
             </div>
             <div class="card-body">
+                <div id="alertContainer"></div> <!-- Container for Bootstrap alerts -->
                 <form method="POST" action="http://localhost:3000/veiculo" id="veiculoForm">
                     <div class="row">
                         <div class="col-md-6">
@@ -73,6 +74,17 @@
     </div>
 
     <script>
+        // Function to show Bootstrap alert
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            `;
+        }
+
         async function loadTipos() {
             try {
                 const response = await fetch('http://localhost:3000/tipo', {
@@ -99,7 +111,7 @@
                 });
             } catch (error) {
                 console.error('Error loading tipos:', error);
-                alert('Erro ao carregar os tipos de veículos');
+                showAlert('Erro ao carregar os tipos de veículos', 'danger');
             }
         }
 
@@ -128,16 +140,16 @@
                 });
 
                 if (response.ok) {
-                    alert('Veículo cadastrado com sucesso!');
+                    showAlert('Veículo cadastrado com sucesso!', 'success');
                     this.reset();
                 } else {
                     const errorData = await response.json();
                     console.error('Erro ao cadastrar veículo:', errorData);
-                    alert(`Erro ao cadastrar veículo: ${errorData.message || response.statusText}`);
+                    showAlert(`Erro ao cadastrar veículo: ${errorData.message || response.statusText}`, 'danger');
                 }
             } catch (error) {
                 console.error('Erro:', error);
-                alert('Erro ao conectar com o servidor.');
+                showAlert('Erro ao conectar com o servidor.', 'danger');
             }
         });
     </script>

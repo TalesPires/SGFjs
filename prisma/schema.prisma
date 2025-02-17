@@ -90,7 +90,7 @@ model frete {
   valor_frete       Decimal?    @db.Decimal(10, 2)
   carga             carga[]
   motorista         motorista? @relation(fields: [cpf_motorista], references: [cpf_motorista], onDelete: NoAction, onUpdate: NoAction, map: "frete_ibfk_1")
-  veiculo           veiculo?    @relation(fields: [renavam], references: [renavam], onDelete: NoAction, onUpdate: NoAction, map: "frete_ibfk_2")
+  veiculo           veiculo?    @relation(fields: [renavam], references: [renavam], onDelete: Cascade, onUpdate: NoAction, map: "frete_ibfk_2")
   pagamento         pagamento[]
 
   @@index([cpf_motorista], map: "cpf_motorista")

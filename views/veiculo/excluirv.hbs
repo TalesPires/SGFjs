@@ -45,7 +45,6 @@
     <script>
         let currentVeiculo = null;
 
-        // Fetch veiculos from NestJS API
         async function loadVeiculos() {
             try {
                 const response = await fetch('http://localhost:3000/veiculo', {
@@ -61,7 +60,6 @@
             }
         }
 
-        // Render veiculos in accordion
         function renderVeiculos(veiculos) {
             const accordion = document.getElementById('vehicleAccordion');
             accordion.innerHTML = '';
@@ -71,7 +69,7 @@
                         <div class="accordion-item AccordionContainer" id="veiculo-${index+1}">
                             <h2 class="accordion-header" id="heading${index+1}">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${index+1}" aria-expanded="true" aria-controls="collapse${index+1}">
-                                    <div class="branco">  ${veiculo.placa} </div>
+                                    <div class="branco">  ${veiculo.placa} - ${veiculo.modelo} </div>
                                 </button>
                             </h2>
                             <div id="collapse${index+1}" class="accordion-collapse collapse" aria-labelledby="heading${index+1}" data-bs-parent="#vehicleAccordion">
@@ -87,7 +85,7 @@
                                             <p><span class="atributos">Cor</span><br>${veiculo.cor}</p>
                                             <p><span class="atributos">Ano</span><br>${veiculo.ano}</p>
                                             <p><span class="atributos">RNTRC</span><br>${veiculo.rntrc}</p>
-                                            <p><span class="atributos">Tipo</span><br>${veiculo.tipo ? veiculo.tipo.nome_tipo : 'N/A'}</p>
+                                            <p><span class="atributos">Tipo</span><br>${veiculo.id_tipo}</p>
                                             <button type="button" class="btn btn-danger btn-pequeno" 
                                                 onclick="showDeleteModal('${veiculo.renavam}')">
                                             Excluir
@@ -101,14 +99,13 @@
             });
         }
 
-        // Show delete confirmation modal
+    
         function showDeleteModal(renavam) {
             currentVeiculo = renavam;
             const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
             modal.show();
         }
 
-        // Handle delete confirmation
         document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
             try {
                 const response = await fetch(`http://localhost:3000/veiculo/${currentVeiculo}`, {
@@ -121,7 +118,7 @@
                 if (!response.ok) throw new Error('Falha ao excluir veículo');
                 
                 alert('Veículo excluído com sucesso!');
-                loadVeiculos(); // Refresh list
+                loadVeiculos();
                 bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
             } catch (error) {
                 console.error('Error deleting veiculo:', error);
@@ -129,7 +126,6 @@
             }
         });
 
-        // Search functionality
         document.getElementById('accordion_search_bar').addEventListener('input', function() {
             const searchText = this.value.toLowerCase();
             const accordionItems = document.querySelectorAll('.accordion-item');
@@ -140,7 +136,6 @@
             });
         });
 
-        // Initial load
         document.addEventListener('DOMContentLoaded', loadVeiculos);
     </script>
 </body>
