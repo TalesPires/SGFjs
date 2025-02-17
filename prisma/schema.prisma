@@ -28,7 +28,6 @@ model carga {
   id_frete     Int?      @db.UnsignedInt
   peso         Decimal?  @db.Decimal(7, 2)
   valor_carga  Decimal?  @db.Decimal(10, 2)
-  frete        frete?    @relation(fields: [id_frete], references: [id_frete], onDelete: NoAction, onUpdate: NoAction, map: "carga_ibfk_1")
   entrega      entrega[]
 
   @@index([id_frete], map: "id_frete")
@@ -39,7 +38,7 @@ model cartao {
   cpf_motorista String?   @db.VarChar(11)
   agencia       String?    @db.VarChar(5)
   validade      DateTime?  @db.Date
-  motorista     motorista? @relation(fields: [cpf_motorista], references: [cpf_motorista], onDelete: NoAction, onUpdate: NoAction, map: "cartao_ibfk_1")
+  motorista     motorista? @relation(fields: [cpf_motorista], references: [cpf_motorista], onDelete: Cascade, onUpdate: NoAction, map: "cartao_ibfk_1")
 
   @@index([cpf_motorista], map: "cpf_motorista")
 }
@@ -79,24 +78,6 @@ model fiscal {
   pagamento    pagamento[]
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model frete {
-  id_frete          Int         @id @default(autoincrement()) @db.UnsignedInt
-  cpf_motorista     String?    @db.VarChar(11)
-  renavam           String?     @db.VarChar(11)
-  data_chegada      DateTime?   @db.DateTime(0)
-  data_saida        DateTime?   @db.DateTime(0)
-  distancia_rodagem Int?        @db.SmallInt
-  valor_frete       Decimal?    @db.Decimal(10, 2)
-  carga             carga[]
-  motorista         motorista? @relation(fields: [cpf_motorista], references: [cpf_motorista], onDelete: NoAction, onUpdate: NoAction, map: "frete_ibfk_1")
-  veiculo           veiculo?    @relation(fields: [renavam], references: [renavam], onDelete: Cascade, onUpdate: NoAction, map: "frete_ibfk_2")
-  pagamento         pagamento[]
-
-  @@index([cpf_motorista], map: "cpf_motorista")
-  @@index([renavam], map: "renavam")
-}
-
 model motorista {
   cpf_motorista String   @id @unique(map: "cpf_motorista_UNIQUE") @db.VarChar(11)
   registro_cnh  String?   @db.VarChar(11)
@@ -105,7 +86,6 @@ model motorista {
   endereco      String?   @db.VarChar(50)
   data_admissao DateTime? @db.Date
   cartao        cartao[]
-  frete         frete[]
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -119,7 +99,6 @@ model pagamento {
   status_pagamento pagamento_status_pagamento?
   valor_calculado  Decimal?                    @db.Decimal(10, 2)
   fiscal           fiscal                      @relation(fields: [cpf_fiscal], references: [cpf_fiscal], onDelete: NoAction, onUpdate: NoAction, map: "pagamento_ibfk_1")
-  frete            frete                       @relation(fields: [id_frete], references: [id_frete], onDelete: NoAction, onUpdate: NoAction, map: "pagamento_ibfk_2")
 
   @@index([cpf_fiscal], map: "pagamento_ibfk_1")
   @@index([id_frete], map: "pagamento_ibfk_2")
@@ -144,7 +123,6 @@ model veiculo {
   cor     String? @db.VarChar(20)
   ano     Int?    @db.Year
   rntrc   String? @db.VarChar(8)
-  frete   frete[]
   tipo    tipo?   @relation(fields: [id_tipo], references: [id_tipo], onDelete: NoAction, onUpdate: NoAction, map: "veiculo_ibfk_1")
 
   @@index([id_tipo], map: "id_tipo")
